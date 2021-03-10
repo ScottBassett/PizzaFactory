@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
@@ -12,11 +15,15 @@ namespace ScottsPizzaFactory.DataAccess.Factory
     {
         private readonly ILogger<PizzaFactory> _log;
         private readonly IConfiguration _config;
+        private readonly ITimer _timer;
+        //private readonly IWriter _writer;
 
-        public PizzaFactory(ILogger<PizzaFactory> log, IConfiguration config)
+        public PizzaFactory(ILogger<PizzaFactory> log, IConfiguration config, ITimer timer)
         {
             _log = log;
             _config = config;
+            _timer = timer;
+            //_writer = writer;
         }
 
         public void RunPizzaFactory()
@@ -29,11 +36,33 @@ namespace ScottsPizzaFactory.DataAccess.Factory
 
             for (var i = 1; i < pizzaCount + 1; i++)
             {
+                //var pizza = CreateRandomPizza();
                 var pizza = CreateRandomPizza();
-                _log.LogInformation($"Your {pizza.GetDescription()} pizza will be ready in {pizza.TotalCookingTime} seconds");
-                //Thread.Sleep((int)pizza.PizzaCookingTimeInMilliseconds);
-                Thread.Sleep(cookingInterval);
-                //_log.LogInformation($"{pizza.PizzaName} is ready!");
+
+                if (pizza.Cooked)
+                {
+                    _log.LogError($"Can't cook {pizza.GetDescription()} again");
+                    return;
+                }
+
+                if (pizza.PizzaBase == null)
+                {
+                    _log.LogError("Can't cook pizza there was no base");
+                    return;
+                }
+
+                if (pizza.PizzaTopping == null)
+                {
+                    _log.LogError("Can't cook pizza there was no topping");
+                    return;
+                }
+
+                _log.LogInformation($"Cooking {pizza.GetDescription()} for {pizza.TotalCookingTime} seconds");
+                _timer.Delay((int)pizza.TotalCookingTime);
+                _log.LogInformation($"Your {pizza.GetDescription()} pizza is ready");
+                pizza.Cooked = true;
+
+                _timer.Delay(cookingInterval);
                 sw.WriteLine($"{i}. {pizza.GetDescription()}");
             }
 

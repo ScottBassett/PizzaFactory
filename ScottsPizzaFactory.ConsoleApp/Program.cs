@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ScottsPizzaFactory.DataAccess;
 using ScottsPizzaFactory.DataAccess.Factory;
 using Serilog;
-
 
 namespace ScottsPizzaFactory.ConsoleApp
 {
@@ -21,12 +21,13 @@ namespace ScottsPizzaFactory.ConsoleApp
                 .WriteTo.Console()
                 .CreateLogger();
 
-            Log.Logger.Information("Pizza Factory Starting Starting...");
+            Log.Logger.Information("Pizza Factory Starting...");
 
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
                     services.AddTransient<IPizzaFactory, PizzaFactory>();
+                    services.AddTransient<ITimer, Timer>();
                 })
                 .UseSerilog()
                 .Build();
@@ -35,8 +36,6 @@ namespace ScottsPizzaFactory.ConsoleApp
             service.RunPizzaFactory();
 
             Log.Logger.Information("Pizza Factory Terminating...");
-
-
         }
 
         static void BuildConfig(IConfigurationBuilder builder)

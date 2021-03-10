@@ -13,6 +13,5 @@
         public bool Cooked { get; set; }
         public string GetDescription() => $"{PizzaBase.BaseName} {PizzaTopping.ToppingName}";
         public double TotalCookingTime => PizzaBase.CookingTime + PizzaTopping.CookingTime;
-
     }
 }

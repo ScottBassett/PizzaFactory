@@ -3,9 +3,7 @@ using System.IO;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using ScottsPizzaFactory.DataAccess.Models.Bases;
-using ScottsPizzaFactory.DataAccess.Models.Pizza;
-using ScottsPizzaFactory.DataAccess.Models.Toppings;
+using ScottsPizzaFactory.DataAccess.Models;
 
 
 namespace ScottsPizzaFactory.DataAccess.Factory
@@ -29,7 +27,7 @@ namespace ScottsPizzaFactory.DataAccess.Factory
 
             _log.LogInformation($"Welcome to pizza factory, {pizzaCount} pizzas coming up!");
 
-            for (var i = 1; i < pizzaCount+1; i++)
+            for (var i = 1; i < pizzaCount + 1; i++)
             {
                 var pizza = CreateRandomPizza();
                 _log.LogInformation($"Your {pizza.GetDescription()} pizza will be ready in {pizza.TotalCookingTime} seconds");
@@ -43,7 +41,7 @@ namespace ScottsPizzaFactory.DataAccess.Factory
             _log.LogInformation("Thank you for your order.");
         }
 
-        PizzaTopping CreateRandomTopping()
+        private PizzaTopping CreateRandomTopping()
         {
             var toppingsFromConfig = _config.GetSection("pizzaToppings");
 
@@ -60,14 +58,14 @@ namespace ScottsPizzaFactory.DataAccess.Factory
             return toppings[randomTopping];
         }
 
-        PizzaBase CreateRandomBase()
+        private PizzaBase CreateRandomBase()
         {
             var basesFromConfig = _config.GetSection("pizzaBases");
 
             PizzaBase[] bases =
             {
-                new PizzaBase(basesFromConfig.GetSection("thinAndCrispy").GetValue<string>("baseName"),basesFromConfig.GetSection("thinAndCrispy").GetValue<double>("multiplier")), 
-                new PizzaBase(basesFromConfig.GetSection("stuffedCrust").GetValue<string>("baseName"),basesFromConfig.GetSection("stuffedCrust").GetValue<double>("multiplier")), 
+                new PizzaBase(basesFromConfig.GetSection("thinAndCrispy").GetValue<string>("baseName"),basesFromConfig.GetSection("thinAndCrispy").GetValue<double>("multiplier")),
+                new PizzaBase(basesFromConfig.GetSection("stuffedCrust").GetValue<string>("baseName"),basesFromConfig.GetSection("stuffedCrust").GetValue<double>("multiplier")),
                 new PizzaBase(basesFromConfig.GetSection("deepPan").GetValue<string>("baseName"),basesFromConfig.GetSection("deepPan").GetValue<double>("multiplier")),
             };
 

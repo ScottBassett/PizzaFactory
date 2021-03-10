@@ -1,7 +1,4 @@
-﻿using ScottsPizzaFactory.DataAccess.Models.Bases;
-using ScottsPizzaFactory.DataAccess.Models.Toppings;
-
-namespace ScottsPizzaFactory.DataAccess.Models.Pizza
+﻿namespace ScottsPizzaFactory.DataAccess.Models
 {
     public interface IPizza
     {
@@ -12,8 +9,8 @@ namespace ScottsPizzaFactory.DataAccess.Models.Pizza
         //double TotalCookingTime { get; }
 
         PizzaBase PizzaBase { get; set; }
-         PizzaTopping PizzaTopping { get; set; }
-         bool Cooked { get; set; }
-         string GetDescription();
+        PizzaTopping PizzaTopping { get; set; }
+        bool Cooked { get; set; }
+        string GetDescription();
     }
 }

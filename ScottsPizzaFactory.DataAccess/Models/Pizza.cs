@@ -1,7 +1,4 @@
-﻿using ScottsPizzaFactory.DataAccess.Models.Bases;
-using ScottsPizzaFactory.DataAccess.Models.Toppings;
-
-namespace ScottsPizzaFactory.DataAccess.Models.Pizza
+﻿namespace ScottsPizzaFactory.DataAccess.Models
 {
     public class Pizza : IPizza
     {

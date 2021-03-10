@@ -1,4 +1,4 @@
-﻿namespace ScottsPizzaFactory.DataAccess.Models.Bases
+﻿namespace ScottsPizzaFactory.DataAccess.Models
 {
     public class PizzaBase
     {
@@ -15,17 +15,4 @@
 
         public double CookingTime => BaseTimeInMilliseconds * Multiplier;
     }
-
-    
-    //public class PizzaBase
-    //{
-    //    public PizzaBase(string baseName, double multiplier)
-    //    {
-    //        BaseName = baseName;
-    //        Multiplier = multiplier;
-    //    }
-
-    //    public string BaseName { get; }
-    //    public double Multiplier { get; }
-    //}
 }

@@ -1,4 +1,4 @@
-﻿namespace ScottsPizzaFactory.DataAccess.Models.Toppings
+﻿namespace ScottsPizzaFactory.DataAccess.Models
 {
     public class PizzaTopping
     {

@@ -21,7 +21,7 @@ namespace ScottsPizzaFactory.ConsoleApp
                 .WriteTo.Console()
                 .CreateLogger();
 
-            Log.Logger.Information("Application Starting");
+            Log.Logger.Information("Pizza Factory Starting Starting...");
 
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
@@ -33,6 +33,9 @@ namespace ScottsPizzaFactory.ConsoleApp
 
             var service = ActivatorUtilities.CreateInstance<PizzaFactory>(host.Services);
             service.RunPizzaFactory();
+
+            Log.Logger.Information("Pizza Factory Terminating...");
+
 
         }
 

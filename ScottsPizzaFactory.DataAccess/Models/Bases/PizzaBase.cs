@@ -1,7 +1,13 @@
 ﻿namespace ScottsPizzaFactory.DataAccess.Models.Bases
 {
-    public abstract class PizzaBase
+    public class PizzaBase
     {
+        public PizzaBase(string baseName, double multiplier)
+        {
+            BaseName = baseName;
+            Multiplier = multiplier;
+        }
+
         public string BaseName { get; set; }
         public double Multiplier { get; set; }
 

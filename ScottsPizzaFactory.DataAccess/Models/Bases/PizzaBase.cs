@@ -10,12 +10,7 @@
         public double CookingTime => BaseTimeInMilliseconds * Multiplier;
     }
 
-
-
-
     
-
-
     //public class PizzaBase
     //{
     //    public PizzaBase(string baseName, double multiplier)

@@ -1,59 +1,50 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using ScottsPizzaFactory.DataAccess.Models.Bases;
 using ScottsPizzaFactory.DataAccess.Models.Pizza;
 using ScottsPizzaFactory.DataAccess.Models.Toppings;
-using ScottsPizzaFactory.DataAccess.Services;
 
 
 namespace ScottsPizzaFactory.DataAccess.Factory
 {
     public class PizzaFactory : IPizzaFactory
     {
-        private readonly IConsoleWriter _consoleWriter;
-        public PizzaFactory(IServiceProvider serviceProvider)
+        private readonly ILogger<PizzaFactory> _log;
+        private readonly IConfiguration _config;
+
+        public PizzaFactory(ILogger<PizzaFactory> log, IConfiguration config)
         {
-            _consoleWriter = serviceProvider.GetService<IConsoleWriter>();
+            _log = log;
+            _config = config;
         }
 
         public void RunPizzaFactory()
         {
-            var amountOfPizzas = 10;
+            var amountOfPizzas = _config.GetValue<int>("pizzaCount");
+            var sw = new StreamWriter(_config.GetValue<string>("textFile"));
 
-            var pizzaList = new List<Pizza>();
+            _log.LogInformation($"Welcome to pizza factory, {amountOfPizzas} pizzas coming up!");
 
-            Console.WriteLine($"Welcome to pizza factory, {amountOfPizzas} pizzas coming up!");
-
-
-            for (var i = 0; i < amountOfPizzas; i++)
+            for (var i = 1; i < amountOfPizzas+1; i++)
             {
                 var pizza = CreateRandomPizza();
-                Console.WriteLine($"Your {pizza.PizzaName} pizza will be ready in {pizza.PizzaCookingTimeInMilliseconds} milliseconds");
-                Thread.Sleep((int)pizza.PizzaCookingTimeInMilliseconds);
-                Console.WriteLine($"{pizza.PizzaName} is ready!");
-                pizzaList.Add(pizza);
-
-                var sw = new StreamWriter("C:\\Temp\\PizzaList.txt");
-                foreach (var finishedPizza in pizzaList)
-                {
-                    sw.WriteLine(finishedPizza.PizzaName);
-                }
-
-                sw.Close();
-
+                _log.LogInformation($"Your {pizza.PizzaName} pizza will be ready in {pizza.PizzaCookingTimeInMilliseconds / 1000} seconds");
+                //Thread.Sleep((int)pizza.PizzaCookingTimeInMilliseconds);
+                Thread.Sleep(_config.GetValue<int>("cookingInterval"));
+                //_log.LogInformation($"{pizza.PizzaName} is ready!");
+                sw.WriteLine($"{i}. {pizza.PizzaName}");
             }
-            Console.WriteLine("Thank you for your order!");
+
+            sw.Close();
+            _log.LogInformation("Thank you for your order!");
         }
 
         PizzaTopping CreateRandomTopping()
         {
-            PizzaTopping[] toppings = new PizzaTopping[]
-            {
-                new HamAndMushroom(), new Pepperoni(), new Vegetable()
-            };
+            PizzaTopping[] toppings = { new HamAndMushroom(), new Pepperoni(), new Vegetable() };
 
             var random = new Random();
             var randomTopping = random.Next() % toppings.Length;
@@ -63,10 +54,7 @@ namespace ScottsPizzaFactory.DataAccess.Factory
 
         PizzaBase CreateRandomBase()
         {
-            PizzaBase[] bases = new PizzaBase[]
-            {
-                new ThinAndCrispy(), new DeepPan(), new StuffedCrust()
-            };
+            PizzaBase[] bases = { new ThinAndCrispy(), new DeepPan(), new StuffedCrust() };
 
             var random = new Random();
             var randomBase = random.Next() % bases.Length;

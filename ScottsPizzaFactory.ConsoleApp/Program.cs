@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.IO;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using ScottsPizzaFactory.DataAccess.Factory;
-using ScottsPizzaFactory.DataAccess.Services;
+using Serilog;
 
 
 namespace ScottsPizzaFactory.ConsoleApp
@@ -9,30 +12,35 @@ namespace ScottsPizzaFactory.ConsoleApp
     {
         static void Main(string[] args)
         {
-            var serviceProvider = SetupDependencyInjection();
+            var builder = new ConfigurationBuilder();
+            BuildConfig(builder);
 
-            var pizzaFactoryRunner = new PizzaFactory(serviceProvider);
-            pizzaFactoryRunner.RunPizzaFactory();
-            pizzaFactoryRunner.CreateRandomPizza();
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Build())
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            Log.Logger.Information("Application Starting");
+
+            var host = Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddTransient<IPizzaFactory, PizzaFactory>();
+                })
+                .UseSerilog()
+                .Build();
+
+            var service = ActivatorUtilities.CreateInstance<PizzaFactory>(host.Services);
+            service.RunPizzaFactory();
+
         }
 
-        static ServiceProvider SetupDependencyInjection()
+        static void BuildConfig(IConfigurationBuilder builder)
         {
-            return new ServiceCollection()
-                .AddSingleton<IConsoleWriter, ConsoleWriter>()
-                .BuildServiceProvider();
+            builder.SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", false, true)
+                .AddEnvironmentVariables();
         }
-
-        //private static void ConfigureServices(IServiceCollection serviceCollection)
-        //{
-        //    // Build configuration
-        //    var configuration = new ConfigurationBuilder()
-        //        .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
-        //        .AddJsonFile("appsettings.json", false)
-        //        .Build();
-
-        //    // Add access to generic IConfigurationRoot
-        //    serviceCollection.AddSingleton<IConfigurationRoot>(configuration);
-        //}
     }
 }

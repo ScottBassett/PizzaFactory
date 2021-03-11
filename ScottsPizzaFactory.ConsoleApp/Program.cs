@@ -28,12 +28,13 @@ namespace ScottsPizzaFactory.ConsoleApp
                 {
                     services.AddTransient<IPizzaFactory, PizzaFactory>();
                     services.AddTransient<ITimer, Timer>();
+                    services.AddTransient<IWriter, Writer>();
                 })
                 .UseSerilog()
                 .Build();
 
             var service = ActivatorUtilities.CreateInstance<PizzaFactory>(host.Services);
-            service.RunPizzaFactory();
+            service.Run();
 
             Log.Logger.Information("Pizza Factory Terminating...");
         }

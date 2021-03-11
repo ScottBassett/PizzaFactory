@@ -2,6 +2,6 @@
 {
     public interface IPizzaFactory
     {
-        void RunPizzaFactory();
+        void Run();
     }
 }

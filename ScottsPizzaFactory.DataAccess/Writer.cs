@@ -5,7 +5,9 @@ namespace ScottsPizzaFactory.DataAccess
     public class Writer : IWriter
     {
         private readonly StreamWriter _streamWriter;
-        public Writer(string fileName)
+        private readonly string fileName = "C:\\Temp\\PizzaList.txt";
+
+        public Writer()
         {
             if (File.Exists(fileName))
             {
